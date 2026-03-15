@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Kviz – 7. razred</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d1117;--panel:#161b22;--card:#1c2230;--border:#2a3444;
+  --blue:#4d9cf8;--green:#3fb68e;--red:#f75a5a;--yellow:#f5c518;--purple:#a78bfa;
+  --text:#e6edf3;--muted:#6e8098;
+  --mono:'JetBrains Mono',monospace;--sans:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+#app{min-height:100vh;}
+
+/* SIDEBAR */
+#sidebar{width:272px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100%;overflow:hidden;transition:width 0.3s ease;z-index:10;}
+#sidebar.collapsed{width:50px;}
+.sb-head{padding:18px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-logo{width:30px;height:30px;flex-shrink:0;background:linear-gradient(135deg,#217EFD,var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;}
+.sb-ttl{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;}
+.sb-ttl small{display:block;font-size:10px;color:var(--muted);font-weight:400;}
+.sb-stats{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+#sidebar.collapsed .sb-stats{flex-direction:column;padding:8px 6px;}
+.sst{flex:1;background:var(--card);border-radius:7px;padding:7px;text-align:center;}
+.sst .n{font-family:var(--mono);font-size:15px;font-weight:700;}
+.sst .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+#sidebar.collapsed .sst .l{display:none;}
+#sidebar.collapsed .sst .n{font-size:12px;}
+.sb-scroll{flex:1;overflow-y:auto;padding:8px;}
+.sb-scroll::-webkit-scrollbar{width:3px;}
+.sb-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.tp-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:10px 8px 3px;font-weight:700;white-space:nowrap;overflow:hidden;}
+#sidebar.collapsed .tp-lbl{display:none;}
+.qnb{width:100%;display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;border:none;background:transparent;color:var(--muted);font-family:var(--sans);font-size:12px;cursor:pointer;text-align:left;transition:all 0.15s;margin-bottom:2px;}
+.qnb:hover{background:var(--card);color:var(--text);}
+.qnb.active{background:rgba(77,156,248,.15);color:var(--blue);}
+.qnb.dc{color:var(--green);}
+.qnb.dw{color:var(--red);}
+.qnb.sk{color:var(--yellow);}
+.qnum{width:24px;height:24px;flex-shrink:0;border-radius:5px;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;transition:all 0.15s;}
+.qnb.active .qnum{background:var(--blue);color:#fff;}
+.qnb.dc .qnum{background:rgba(63,182,142,.25);color:var(--green);}
+.qnb.dw .qnum{background:rgba(247,90,90,.2);color:var(--red);}
+.qnb.sk .qnum{background:rgba(245,197,24,.15);color:var(--yellow);}
+.qtxt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:175px;}
+#sidebar.collapsed .qtxt{display:none;}
+.sb-toggle{padding:10px;border-top:1px solid var(--border);display:flex;justify-content:center;flex-shrink:0;}
+.tgl-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:7px 14px;cursor:pointer;font-size:13px;transition:all 0.2s;}
+.tgl-btn:hover{color:var(--text);border-color:var(--blue);}
+
+/* MAIN WRAPPER - centres the content area */
+#mainWrap{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  overflow-y:auto;
+  height:100%;
+}
+
+/* MAIN */
+#main{
+  width:100%;
+  max-width:860px;
+  padding:36px 48px;
+  font-size:16px;
+}
+@media(max-width:1100px){#main{padding:28px 32px;}}
+@media(max-width:860px){#main{padding:20px 20px;font-size:15px;}}
+@media(max-width:680px){#main{padding:16px 14px;font-size:14px;}}
+
+/* TOP BAR */
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:14px;flex-wrap:wrap;}
+.pw{flex:1;min-width:140px;}
+.pl{font-size:12px;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between;}
+.pb{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width 0.6s cubic-bezier(.4,0,.2,1);}
+.sc-pill{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 16px;font-family:var(--mono);font-size:14px;font-weight:700;color:var(--yellow);white-space:nowrap;}
+
+/* QUESTION CARD */
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:14px;animation:fsl 0.3s ease;}
+@keyframes fsl{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.qmeta{display:flex;align-items:center;gap:9px;margin-bottom:16px;flex-wrap:wrap;}
+.qbadge{width:32px;height:32px;border-radius:8px;background:rgba(77,156,248,.2);color:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0;}
+.ttag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:3px 9px;border-radius:5px;}
+.t-abc{background:rgba(77,156,248,.15);color:var(--blue);}
+.t-fill{background:rgba(245,197,24,.15);color:var(--yellow);}
+.t-match{background:rgba(167,139,250,.15);color:var(--purple);}
+.tpctag{font-size:11px;color:var(--muted);margin-left:auto;}
+.qtxt2{font-size:clamp(16px,1.8vw,20px);font-weight:700;line-height:1.55;color:#fff;margin-bottom:20px;}
+
+/* EXCEL */
+.ewrap{background:#fff;border-radius:9px;overflow:hidden;margin-bottom:18px;box-shadow:0 6px 24px rgba(0,0,0,.4);}
+.fxbar{background:#f0f4fa;border-bottom:1px solid #dde5f0;padding:5px 12px;font-family:var(--mono);font-size:12px;color:#444;display:flex;gap:7px;align-items:center;}
+.fxbar .fx{color:#217EFD;font-weight:700;}
+.ext{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px;}
+.ext th{background:#217EFD;color:#fff;padding:6px 12px;text-align:center;border:1px solid #1a6fd4;font-weight:700;}
+.ext td{background:#fff;color:#1a2a3a;padding:6px 12px;text-align:center;border:1px solid #dde5f0;min-width:64px;}
+.ext td.rh{background:#eef3fd;color:#217EFD;font-weight:700;border-right:2px solid #c3d4f0;}
+.ext td.hi{background:#fff8e1;font-weight:700;color:#7a5c00;}
+.ext td.res{background:#e6f9f3;font-weight:700;color:#1a7a5c;}
+.ext td.abs{background:#f3e8ff;font-weight:700;color:#7c3aed;}
+.ext td.rng{background:#dbeafe;font-weight:700;color:#1d4ed8;outline:2px solid #3b82f6;outline-offset:-2px;}
+
+/* OPTIONS */
+.opts{display:grid;gap:9px;}
+.opt{display:flex;align-items:center;gap:11px;padding:14px 18px;border-radius:11px;border:2px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer;font-family:var(--sans);font-size:15px;font-weight:500;color:var(--text);text-align:left;transition:all 0.18s;}
+.opt:hover:not(:disabled){border-color:var(--blue);background:rgba(77,156,248,.08);transform:translateX(3px);}
+.opt .ltr{width:28px;height:28px;flex-shrink:0;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;transition:all 0.18s;}
+.opt.correct{border-color:var(--green);background:rgba(63,182,142,.1);}
+.opt.correct .ltr{background:var(--green);color:#fff;}
+.opt.wrong{border-color:var(--red);background:rgba(247,90,90,.08);}
+.opt.wrong .ltr{background:var(--red);color:#fff;}
+.opt:disabled{cursor:default;transform:none!important;}
+
+/* FILL */
+.fill-row{display:flex;gap:9px;flex-wrap:wrap;}
+.fin{flex:1;min-width:180px;background:rgba(255,255,255,.04);border:2px solid var(--border);border-radius:9px;padding:12px 16px;font-family:var(--mono);font-size:15px;color:var(--text);outline:none;transition:all 0.2s;}
+.fin:focus{border-color:var(--blue);}
+.fin.correct{border-color:var(--green);color:var(--green);background:rgba(63,182,142,.08);}
+.fin.wrong{border-color:var(--red);color:var(--red);background:rgba(247,90,90,.07);}
+.btn-chk{background:var(--blue);color:#fff;border:none;padding:12px 22px;border-radius:9px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-chk:hover{background:#3a8ee0;transform:translateY(-2px);}
+
+/* MATCH */
+.mwrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mclbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:5px;font-weight:700;}
+.mi{padding:10px 14px;border-radius:9px;border:2px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.03);transition:all 0.2s;user-select:none;margin-bottom:7px;}
+.mi.L:hover:not(.done),.mi.L.sel{border-color:var(--blue);background:rgba(77,156,248,.12);color:var(--blue);}
+.mi.R:hover:not(.done),.mi.R.sel{border-color:var(--purple);background:rgba(167,139,250,.1);color:var(--purple);}
+.mi.ok{border-color:var(--green);background:rgba(63,182,142,.1);color:var(--green);pointer-events:none;}
+.mi.err{border-color:var(--red);background:rgba(247,90,90,.1);animation:shk 0.3s ease;}
+@keyframes shk{0%,100%{transform:none}30%{transform:translateX(-5px)}70%{transform:translateX(5px)}}
+.mhint{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;}
+
+/* FEEDBACK */
+.fb{border-radius:11px;padding:14px 18px;margin-top:12px;font-size:14px;font-weight:600;display:none;gap:9px;align-items:flex-start;line-height:1.6;}
+.fb.show{display:flex;}
+.fb.ok{background:rgba(63,182,142,.1);border:1px solid rgba(63,182,142,.35);color:#6ee7c7;}
+.fb.err{background:rgba(247,90,90,.08);border:1px solid rgba(247,90,90,.28);color:#fca5a5;}
+.fbico{font-size:17px;flex-shrink:0;margin-top:1px;}
+
+/* ACTIONS */
+.arow{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.btn-skip{background:transparent;border:2px solid var(--border);color:var(--muted);padding:12px 22px;border-radius:9px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-skip:hover{border-color:var(--yellow);color:var(--yellow);}
+.btn-next{flex:1;background:linear-gradient(135deg,var(--green),#2a9d7a);color:#fff;border:none;padding:13px 20px;border-radius:9px;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;display:none;}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(63,182,142,.28);}
+.btn-next.show{display:block;}
+.btn-fin{background:transparent;border:2px solid var(--blue);color:var(--blue);padding:13px 20px;border-radius:9px;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;}
+.btn-fin.done{background:linear-gradient(135deg,var(--blue),#3a8ee0);color:#fff;border:none;}
+.btn-fin:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(77,156,248,.28);}
+
+/* SCREENS */
+.screen{display:none;}
+.screen.on{display:block;}
+#startWrap.on,#resultsWrap.on{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center;}
+#quizWrap{display:none;}
+#quizWrap.on{display:flex;flex-direction:row;position:fixed;inset:0;width:100vw;height:100vh;overflow:hidden;}
+
+/* START */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:28px;animation:rise .7s both;}
+.sc2{width:52px;height:52px;border-radius:9px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);}
+.sc2.h{background:rgba(77,156,248,.15);border-color:var(--blue);color:var(--blue);font-weight:700;}
+.sc2.f{background:rgba(63,182,142,.1);border-color:var(--green);color:var(--green);font-size:9px;}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.s-title{font-size:clamp(34px,6vw,60px);font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:9px;animation:rise .7s .1s both;}
+.s-sub{font-size:16px;color:var(--muted);margin-bottom:32px;animation:rise .7s .2s both;}
+.s-chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:36px;animation:rise .7s .3s both;}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:7px 15px;font-size:12px;color:var(--muted);}
+.s-info{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;max-width:400px;animation:rise .7s .35s both;}
+.si{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px 10px;}
+.si .n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--blue);}
+.si .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.btn-go{background:linear-gradient(135deg,var(--blue),#2d7fd4);color:#fff;border:none;padding:17px 60px;font-family:var(--sans);font-size:19px;font-weight:800;border-radius:14px;cursor:pointer;letter-spacing:.3px;box-shadow:0 10px 40px rgba(77,156,248,.4);transition:all 0.2s;animation:rise .7s .45s both;}
+.btn-go:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(77,156,248,.5);}
+
+/* RESULTS */
+.rtroph{font-size:76px;margin-bottom:18px;animation:bnc .7s ease;}
+@keyframes bnc{0%,100%{transform:none}40%{transform:translateY(-20px)}}
+.r-title{font-size:clamp(26px,5vw,46px);font-weight:800;color:#fff;margin-bottom:7px;}
+.r-sub{font-size:16px;color:var(--muted);margin-bottom:32px;}
+.r-circ{width:168px;height:168px;border-radius:50%;border:5px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(135deg,var(--blue),var(--green)) border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 32px;}
+.r-sc{font-family:var(--mono);font-size:50px;font-weight:700;color:#fff;line-height:1;}
+.r-of{font-size:12px;color:var(--muted);}
+.r-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:520px;margin-bottom:28px;}
+.rg{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 8px;}
+.rg .n{font-family:var(--mono);font-size:26px;font-weight:700;}
+.rg .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.r-msg{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 22px;max-width:520px;width:100%;font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px;text-align:left;}
+.btn-retry{background:linear-gradient(135deg,var(--blue),#2d7fd4);color:#fff;border:none;padding:14px 46px;font-family:var(--sans);font-size:16px;font-weight:800;border-radius:13px;cursor:pointer;box-shadow:0 8px 28px rgba(77,156,248,.3);transition:all 0.2s;}
+.btn-retry:hover{transform:translateY(-3px);}
+
+@media(max-width:680px){
+  #sidebar{position:absolute;height:100%;}
+  #sidebar:not(.collapsed){width:250px;box-shadow:8px 0 32px rgba(0,0,0,.5);}
+  #sidebar.collapsed{width:44px;}
+  #mainWrap{margin-left:44px;}
+  #main{padding:14px 12px;font-size:14px;}
+  .mwrap{grid-template-columns:1fr;}
+  .r-grid{grid-template-columns:repeat(2,1fr);}
+  .qcard{padding:20px 16px;}
+  .opt{font-size:13px;padding:11px 14px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- START -->
+<div id="startWrap" class="screen on">
+  <div class="sgrid">
+    <div class="sc2 h">A</div><div class="sc2 h">B</div><div class="sc2 h">C</div><div class="sc2 h">D</div>
+    <div class="sc2">1</div><div class="sc2" style="background:rgba(245,197,24,.1);border-color:var(--yellow);color:var(--yellow)">A1</div><div class="sc2" style="background:rgba(167,139,250,.12);border-color:var(--purple);color:var(--purple)">$B$2</div><div class="sc2">25</div>
+    <div class="sc2 f">=SUM</div><div class="sc2 f">=AVG</div><div class="sc2 f">=MAX</div><div class="sc2 f">=MIN</div>
+  </div>
+  <h1 class="s-title">Excel Kviz</h1>
+  <p class="s-sub">Informatika · 7. razred · Provjera znanja</p>
+  <div class="s-chips">
+    <div class="chip">📋 Osnove Excela</div>
+    <div class="chip">🖥️ Osnove programa</div>
+    <div class="chip">📍 Adrese ćelija</div>
+    <div class="chip">➕ Formule</div>
+    <div class="chip">🧮 Funkcije</div>
+    <div class="chip">🔄 Relativne adrese</div>
+    <div class="chip">🔒 Apsolutne adrese</div>
+  </div>
+  <div class="s-info">
+    <div class="si"><div class="n">40</div><div class="l">Pitanja</div></div>
+    <div class="si"><div class="n">4</div><div class="l">Vrste zad.</div></div>
+    <div class="si"><div class="n">7</div><div class="l">Tema</div></div>
+  </div>
+  <button class="btn-go" onclick="startQuiz()">▶  Započni kviz</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quizWrap" class="screen">
+  <nav id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">XL</div>
+      <div class="sb-ttl">Excel Kviz<small>7. razred</small></div>
+    </div>
+    <div class="sb-stats">
+      <div class="sst"><div class="n" style="color:var(--blue)" id="sTotal">0</div><div class="l">Ukupno</div></div>
+      <div class="sst"><div class="n" style="color:var(--green)" id="sCorr">0</div><div class="l">Točno</div></div>
+      <div class="sst"><div class="n" style="color:var(--red)" id="sWrong">0</div><div class="l">Netočno</div></div>
+    </div>
+    <div class="sb-scroll" id="navList"></div>
+    <div class="sb-toggle"><button class="tgl-btn" onclick="toggleSB()">⇄</button></div>
+  </nav>
+
+  <div id="mainWrap">
+  <main id="main">
+    <div class="top-bar">
+      <div class="pw">
+        <div class="pl"><span id="plbl">Pitanje 1 od 32</span><span id="ppct">0%</span></div>
+        <div class="pb"><div class="pf" id="pfill" style="width:3%"></div></div>
+      </div>
+      <div class="sc-pill">⭐ <span id="scDisp">0</span></div>
+    </div>
+    <div class="qcard" id="qCard"></div>
+    <div class="fb" id="fbBox"><div class="fbico" id="fbIco"></div><div id="fbTxt"></div></div>
+    <div class="arow">
+      <button class="btn-skip" id="btnSkip" onclick="skipQ()">⏭ Preskoči</button>
+      <button class="btn-next" id="btnNext" onclick="goNext()">Sljedeće →</button>
+      <button class="btn-fin" id="btnFin" onclick="finishQuiz()">Predaj kviz ✓</button>
+    </div>
+  </main>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsWrap" class="screen">
+  <div class="rtroph" id="rTr">🏆</div>
+  <div class="r-title" id="rTi">Bravo!</div>
+  <div class="r-sub" id="rSb">Evo tvojih rezultata</div>
+  <div class="r-circ"><div class="r-sc" id="rSc">0</div><div class="r-of">bodova</div></div>
+  <div class="r-grid">
+    <div class="rg"><div class="n" style="color:var(--blue)" id="rTot">0</div><div class="l">Ukupno</div></div>
+    <div class="rg"><div class="n" style="color:var(--green)" id="rCo">0</div><div class="l">Točno ✓</div></div>
+    <div class="rg"><div class="n" style="color:var(--red)" id="rWr">0</div><div class="l">Netočno/preskoč. ✗</div></div>
+    <div class="rg"><div class="n" style="color:var(--yellow)" id="rPc">0%</div><div class="l">Uspješnost</div></div>
+  </div>
+  <div class="r-msg" id="rMsg"></div>
+  <button class="btn-retry" onclick="restartQuiz()">🔄  Ponovi kviz</button>
+</div>
+</div>
+
+<script>
+const ALL_Q = [
+
+// ══════════════════════════════════════════
+// ── OSNOVE PROGRAMA (nova sekcija, prva) ──
+// ══════════════════════════════════════════
+{type:'abc',topic:'Osnove programa',
+ text:'Što je radna knjiga (workbook) u Excelu?',
+ opts:['Jedan redak podataka u tablici','Cijeli Excel dokument koji se sprema kao .xlsx datoteka','Jedan radni list unutar dokumenta','Skup formula u jednoj ćeliji'],
+ ans:1,exp:'Radna knjiga (workbook) je cijeli Excel dokument – datoteka s nastavkom .xlsx. Jedna radna knjiga može sadržavati više radnih listova.'},
+
+{type:'abc',topic:'Osnove programa',
+ text:'Što je radni list (worksheet) u Excelu?',
+ opts:['Cijeli Excel dokument','Jedan list (tab) unutar radne knjige na kojemu se nalaze ćelije','Ispis tablice na papiru','Naziv za stupac s podacima'],
+ ans:1,exp:'Radni list je jedan tab unutar radne knjige. Prepoznajemo ga po jezičku (tabu) na dnu prozora. Jedan dokument može imati više radnih listova, npr. "Siječanj", "Veljača"…'},
+
+{type:'abc',topic:'Osnove programa',
+ text:'Koje su tri osnovne VRSTE PODATAKA koje možemo unositi u ćeliju?',
+ opts:['Slike, zvukovi i videozapisi','Broj (vrijednost), tekst (oznaka) i formula','Boja, obrub i pozadina','Stupac, redak i ćelija'],
+ ans:1,exp:'U ćeliju možemo unijeti: broj (npr. 42, 3.14), tekst (npr. "Ime", "Razred") ili formulu koja počinje s = i izračunava rezultat.'},
+
+{type:'abc',topic:'Osnove programa',
+ text:'Koji format broja koristimo kada prikazujemo iznos u eurima (€)?',
+ opts:['Format teksta','Format datuma','Format valute','Format postotka'],
+ ans:2,exp:'Format valute (Currency) prikazuje broj s oznakom valute i decimalnim mjestima. Npr. 1500 postaje 1.500,00 €. Primjenjuje se desnim klikom → Oblikovanje ćelija → Valuta.'},
+
+{type:'abc',topic:'Osnove programa',
+ text:'Što se dogodi kada u ćeliju upišemo "1.1.2025"?',
+ opts:['Excel to tretira kao formulu','Excel prepoznaje datum i sprema ga kao posebni format datuma','Excel prikazuje grešku','Excel to tretira kao tekst bez posebnog značenja'],
+ ans:1,exp:'Excel automatski prepoznaje datume i sprema ih kao serijski broj iznutra, ali prikazuje u formatu datuma. Datumom možemo računati razlike u danima, tražiti najraniji/najkasniji datum itd.'},
+
+{type:'abc',topic:'Osnove programa',
+ text:'Kako u Excelu brzo stvorimo NIZ BROJEVA (npr. 1, 2, 3, 4, 5…) bez ručnog tipkanja svakog broja?',
+ opts:['Moramo ručno upisati svaki broj posebno','Upišemo prva dva broja niza, označimo ih i povučemo ručicu za popunjavanje (mali kvadratić u donjem desnom kutu odabira)','Koristimo tipku F5','Upišemo =NIZ(1,5) u ćeliju'],
+ ans:1,exp:'Automatsko popunjavanje niza: upišemo 1 u A1 i 2 u A2, označimo obje ćelije, pa povučemo malu crnu ručicu (Fill Handle) u donjem desnom kutu prema dolje. Excel prepoznaje obrazac i nastavlja niz: 3, 4, 5…'},
+
+{type:'abc',topic:'Osnove programa',
+ text:'Koji znak/pokazivač koristimo za stvaranje niza podataka (npr. 1, 2, 3… ili pon, uto, sri…) povlačenjem u Excelu?',
+ opts:['✚ bijeli debeli križ – pojavljuje se kad lebdimo nad sredinom ćelije (služi za odabir)','➤ bijela strelica – pojavljuje se izvan tablice','✙ crni tanki križ (Fill Handle) – pojavljuje se na donjem desnom kutu odabrane ćelije ili raspona','↕ dvosmjerna strelica – pojavljuje se na rubu stupca'],
+ ans:2,exp:'Fill Handle je mali crni križ (✙) koji se pojavljuje kada mišem pređemo preko donjeg desnog kuta označene ćelije ili raspona. Povlačenjem tog znaka prema dolje ili u stranu Excel automatski nastavlja niz – brojeve, datume, dane u tjednu i slično.'},
+
+// ══════════════════════════════════
+// ── OSNOVE EXCELA ──
+// ══════════════════════════════════
+{type:'abc',topic:'Osnove Excela',
+ text:'Što je Microsoft Excel?',
+ opts:['Program za obradu teksta','Program za tablično računanje','Program za izradu prezentacija','Program za upravljanje bazama podataka'],
+ ans:1,exp:'Excel je program za tablično računanje (spreadsheet). Koristi se za unos, organizaciju, izračun i analizu podataka u obliku tablica.'},
+
+{type:'abc',topic:'Osnove Excela',
+ text:'Kako se zove sjecište retka i stupca u Excelu?',
+ opts:['Polje','Kvadrat','Ćelija','Blok'],
+ ans:2,exp:'Sjecište retka i stupca naziva se ćelija (engl. cell). Ona je osnovna jedinica tablice u kojoj se pohranjuju podaci.'},
+
+{type:'abc',topic:'Osnove Excela',
+ text:'Čime se označavaju STUPCI u Excelu?',
+ opts:['Brojevima (1, 2, 3…)','Slovima abecede (A, B, C…)','Rimskim brojevima (I, II, III…)','Simbolima (*, #, @…)'],
+ ans:1,exp:'Stupci su označeni slovima abecede: A, B, C… Z, AA, AB… Retci su označeni brojevima počevši od 1.'},
+
+{type:'abc',topic:'Osnove Excela',
+ text:'Čime se označavaju REDCI u Excelu?',
+ opts:['Slovima (A, B, C…)','Brojevima (1, 2, 3…)','Kombinacijom slova i broja','Rimskim brojevima'],
+ ans:1,exp:'Redci su označeni brojevima: 1, 2, 3… Stupci su označeni slovima abecede.'},
+
+// ══════════════════════════════════
+// ── ADRESE ĆELIJA ──
+// ══════════════════════════════════
+{type:'abc',topic:'Adrese ćelija',
+ text:'Koja je adresa ćelije u 4. stupcu i 6. retku?',
+ excel:{hdrs:['','A','B','C','D','E'],
+  rows:[['1','','','','',''],['2','','','','',''],['3','','','','',''],['4','','','','',''],['5','','','','',''],['6','','','','★','']],
+  hiCell:[5,4]},
+ opts:['D4','4D','D6','F6'],ans:2,exp:'Adresa = slovo stupca + broj retka. Četvrti stupac je D, šesti redak je 6 → D6.'},
+
+{type:'abc',topic:'Adrese ćelija',
+ text:'Što označava zapis A1:C3 u Excelu?',
+ excel:{hdrs:['','A','B','C','D'],
+  rows:[['1','A1','B1','C1',''],['2','A2','B2','C2',''],['3','A3','B3','C3',''],['4','','','','']],
+  range:[0,1,2,3]},
+ opts:['Samo ćelije A1 i C3','Blok ćelija od A1 do C3 (9 ćelija)','Sve ćelije u stupcu A i stupcu C','Dijagonalu od A1 do C3'],
+ ans:1,exp:'Dvotočka (:) označava raspon – sve ćelije pravokutnog bloka. A1:C3 obuhvaća A1, A2, A3, B1, B2, B3, C1, C2, C3 – ukupno 9 ćelija.'},
+
+{type:'fill',topic:'Adrese ćelija',
+ text:'Ćelija je označena zvjezdicom (★). Napiši njezinu adresu:',
+ excel:{hdrs:['','A','B','C','D','E','F','G'],
+  rows:[['1','','','','','','',''],['2','','','','','','',''],['3','','','','','','',''],['4','','','','','','★','']],
+  hiCell:[3,6]},
+ correct:['F4','f4'],show:'F4',
+ exp:'Adresa = SLOVO STUPCA + BROJ RETKA. Šesti stupac je F, četvrti redak je 4 → F4.'},
+
+// ══════════════════════════════════
+// ── FORMULE ──
+// ══════════════════════════════════
+{type:'abc',topic:'Formule',
+ text:'Kojim znakom svaka Excel formula mora počinjati?',
+ opts:['+ (plus)','# (ljestve)','= (jednako)','@ (at)'],
+ ans:2,exp:'Svaka formula mora počinjati znakom = (jednako). Bez njega Excel tretira unos kao tekst ili broj, ne kao formulu.'},
+
+{type:'abc',topic:'Formule',
+ text:'Što se ispisuje u ćeliji C1 koja sadrži formulu =A1+B1?',
+ excel:{hdrs:['','A','B','C'],rows:[['1','12','5','?']],fxBar:'=A1+B1',resCell:[0,3]},
+ opts:['Tekst "A1+B1"','12','5','17'],ans:3,exp:'Formula =A1+B1 zbraja vrijednosti: A1=12, B1=5 → 12+5=17. Excel prikazuje izračunati rezultat, ne tekst formule.'},
+
+{type:'abc',topic:'Formule',
+ text:'Koji operator se koristi za MNOŽENJE u Excelu?',
+ opts:['× (puta)','x (malo x)','* (zvjezdica)','· (točka)'],
+ ans:2,exp:'U Excelu množenje se zapisuje operatorom * (zvjezdica). Npr. =A1*B1.'},
+
+{type:'abc',topic:'Formule',
+ text:'Koji je rezultat formule =B2-B3?',
+ excel:{hdrs:['','B'],rows:[['2','15'],['3','7']],fxBar:'=B2-B3'},
+ opts:['22','8','7','15'],ans:1,exp:'Oduzimanje: B2−B3 = 15−7 = 8.'},
+
+{type:'abc',topic:'Formule',
+ text:'Koji je rezultat formule =(A1+B1)*2?',
+ excel:{hdrs:['','A','B'],rows:[['1','4','3']],fxBar:'=(A1+B1)*2'},
+ opts:['11','9','14','7'],ans:2,exp:'Zagrade imaju prioritet: A1+B1 = 4+3 = 7. Zatim množenje: 7×2 = 14.'},
+
+{type:'abc',topic:'Formule',
+ text:'Koji je rezultat formule =A1*B1-C1?',
+ excel:{hdrs:['','A','B','C'],rows:[['1','3','4','2']],fxBar:'=A1*B1-C1'},
+ opts:['10','14','12','6'],ans:0,exp:'Množenje ima prioritet pred oduzimanjem: 3×4 = 12, zatim 12−2 = 10.'},
+
+{type:'fill',topic:'Formule',
+ text:'Napiši formulu koja dijeli vrijednost ćelije A3 s vrijednošću ćelije B3:',
+ excel:{hdrs:['','A','B','C'],rows:[['3','20','4','?']],fxBar:'',resCell:[0,3]},
+ correct:['=A3/B3','=a3/b3'],show:'=A3/B3',
+ exp:'Dijeljenje u Excelu koristi operator /. Formula je =A3/B3. (20÷4 = 5)'},
+
+{type:'fill',topic:'Formule',
+ text:'Napiši formulu koja zbraja ćelije A1, A2 i A3 BEZ korištenja funkcije SUM:',
+ excel:{hdrs:['','A'],rows:[['1','4'],['2','7'],['3','3']]},
+ correct:['=A1+A2+A3','=a1+a2+a3'],show:'=A1+A2+A3',
+ exp:'Bez SUM-a, ćelije vežemo operatorom +: =A1+A2+A3. (4+7+3 = 14)'},
+
+// ══════════════════════════════════
+// ── FUNKCIJE ──
+// ══════════════════════════════════
+{type:'abc',topic:'Funkcije',
+ text:'Koji je rezultat =SUM(A1:A4) za prikazane podatke?',
+ excel:{hdrs:['','A'],rows:[['1','3'],['2','5'],['3','4'],['4','2'],['5','6']],fxBar:'=SUM(A1:A4)'},
+ opts:['12','14','20','16'],ans:1,exp:'SUM zbraja vrijednosti samo u zadanom rasponu A1:A4: 3+5+4+2 = 14. Vrijednost u A5 (6) nije uključena jer raspon staje na A4.'},
+
+{type:'abc',topic:'Funkcije',
+ text:'Koji je rezultat =MAX(B1:B4) za prikazane podatke?',
+ excel:{hdrs:['','B'],rows:[['1','7'],['2','3'],['3','9'],['4','5']],fxBar:'=MAX(B1:B4)'},
+ opts:['3','5','7','9'],ans:3,exp:'MAX vraća najveću vrijednost. Vrijednosti: 7, 3, 9, 5 → MAX = 9.'},
+
+{type:'abc',topic:'Funkcije',
+ text:'Koji je rezultat =MIN(C1:C5) za prikazane podatke?',
+ excel:{hdrs:['','C'],rows:[['1','8'],['2','3'],['3','6'],['4','1'],['5','5']],fxBar:'=MIN(C1:C5)'},
+ opts:['8','3','1','5'],ans:2,exp:'MIN vraća najmanju vrijednost. Vrijednosti: 8, 3, 6, 1, 5 → MIN = 1.'},
+
+{type:'abc',topic:'Funkcije',
+ text:'Koji je rezultat =AVERAGE(A1:A4) za prikazane podatke?',
+ excel:{hdrs:['','A'],rows:[['1','2'],['2','4'],['3','6'],['4','8']],fxBar:'=AVERAGE(A1:A4)'},
+ opts:['20','4','6','5'],ans:3,exp:'AVERAGE = zbroj ÷ broj ćelija. (2+4+6+8) ÷ 4 = 20 ÷ 4 = 5.'},
+
+{type:'abc',topic:'Funkcije',
+ text:'Koji je rezultat =SUM(A1:A3) + MAX(B1:B3) za prikazane podatke?',
+ excel:{hdrs:['','A','B'],rows:[['1','2','6'],['2','3','4'],['3','5','8']],fxBar:'=SUM(A1:A3)+MAX(B1:B3)'},
+ opts:['18','28','10','16'],ans:0,exp:'SUM(A1:A3) = 2+3+5 = 10. MAX(B1:B3) = max(6,4,8) = 8. Ukupno: 10+8 = 18.'},
+
+{type:'fill',topic:'Funkcije',
+ text:'Napiši funkciju koja zbraja sve ocjene u stupcu C (od C2 do C6):',
+ excel:{hdrs:['','A','B','C'],
+  rows:[['1','Ime','Prezime','Ocjena'],['2','Ana','Babić','4'],['3','Ivan','Horvat','5'],['4','Maja','Kovač','3'],['5','Luka','Novak','5'],['6','Tea','Perić','4'],['7','','Zbroj:','?']],
+  resCell:[6,3]},
+ correct:['=SUM(C2:C6)','=sum(c2:c6)'],show:'=SUM(C2:C6)',
+ exp:'=SUM(C2:C6) – zbraja sve ocjene od C2 do C6. (4+5+3+5+4 = 21)'},
+
+{type:'fill',topic:'Funkcije',
+ text:'Napiši funkciju koja izračunava prosječnu temperaturu od ponedjeljka do srijede:',
+ excel:{hdrs:['','A','B'],
+  rows:[['1','Dan','Temp (°C)'],['2','Pon','4'],['3','Uto','6'],['4','Sri','5'],['5','Čet','3'],['6','Pet','7'],['7','','?']],
+  resCell:[6,1]},
+ correct:['=AVERAGE(B2:B4)','=average(b2:b4)'],show:'=AVERAGE(B2:B4)',
+ exp:'=AVERAGE(B2:B4) – izračunava prosjek samo za pon., uto. i sri. (4+6+5) ÷ 3 = 15 ÷ 3 = 5°C. Četvrtak i petak nisu uključeni jer raspon staje na B4.'},
+
+{type:'fill',topic:'Funkcije',
+ text:'Napiši funkciju koja pronalazi NAJMANJI broj bodova na testu:',
+ excel:{hdrs:['','A','B'],
+  rows:[['1','Učenik','Bodovi'],['2','Ana','8'],['3','Ivan','6'],['4','Maja','9'],['5','Luka','7'],['6','Tea','5'],['7','','?']],
+  resCell:[6,1]},
+ correct:['=MIN(B2:B6)','=min(b2:b6)'],show:'=MIN(B2:B6)',
+ exp:'=MIN(B2:B6) – vraća najmanje bodova u rasponu. Vrijednosti: 8,6,9,7,5 → MIN = 5.'},
+
+{type:'abc',topic:'Funkcije',
+ text:'Koja formula ispravno pronalazi MAKSIMALNU vrijednost u rasponu F1:F10?',
+ opts:['=MAXIMUM(F1:F10)','=MAX(F1:F10)','=MAX[F1:F10]','=VELIKO(F1:F10)'],
+ ans:1,exp:'Ispravna sintaksa: =MAX(raspon). Koristimo obične zagrade, ne uglate! =MAX(F1:F10).'},
+
+// ══════════════════════════════════
+// ── RELATIVNE ADRESE ──
+// ══════════════════════════════════
+{type:'abc',topic:'Relativne adrese',
+ text:'Što su relativne adrese ćelija u Excelu?',
+ opts:['Adrese koje se nikad ne mijenjaju pri kopiranju formule','Adrese koje se automatski prilagođavaju kada kopiramo formulu u drugi redak ili stupac','Adrese koje sadrže znak $','Adrese koje upućuju na drugi radni list'],
+ ans:1,exp:'Relativna adresa (npr. A1, B3) automatski se prilagođava pri kopiranju. Ako formulu iz C1 kopiraš u C2, =A1+B1 postaje =A2+B2.'},
+
+{type:'abc',topic:'Relativne adrese',
+ text:'Formula =A1*2 je u ćeliji B1. Što postaje formula kada je kopiramo u ćeliju B3?',
+ excel:{hdrs:['','A','B'],rows:[['1','5','=A1*2'],['2','8',''],['3','12','?']]},
+ opts:['=A1*2 (ostaje ista)','=A3*2 (relativno)','=B1*2','=$A$1*2'],
+ ans:1,exp:'Relativna adresa se prilagođava. Premještamo se za 2 retka dolje (B1→B3), pa se A1 pomiče za 2 retka dolje → A3. Formula postaje =A3*2.'},
+
+{type:'abc',topic:'Relativne adrese',
+ text:'U ćeliji C2 je formula =A2+B2. Kopiramo je u D3. Što je nova formula?',
+ excel:{hdrs:['','A','B','C','D'],
+  rows:[['1','10','5','',''],['2','8','3','=A2+B2',''],['3','12','7','','?']],
+  fxBar:'=A2+B2',resCell:[2,4]},
+ opts:['=A2+B2','=B3+C3','=A3+B3','=A2+C2'],
+ ans:1,exp:'Premjestili smo se 1 stupac desno (C→D) i 1 redak dolje (2→3). Stupci A→B, B→C. Retci 2→3. Nova formula: =B3+C3.'},
+
+// ══════════════════════════════════
+// ── APSOLUTNE ADRESE ──
+// ══════════════════════════════════
+{type:'abc',topic:'Apsolutne adrese',
+ text:'Što su apsolutne adrese ćelija u Excelu?',
+ opts:['Adrese koje se automatski prilagođavaju kopiranjem','Adrese koje se NIKAD NE MIJENJAJU pri kopiranju formule – uvijek upućuju na istu ćeliju','Adrese bez slova i broja','Adrese u drugom Excel dokumentu'],
+ ans:1,exp:'Apsolutna adresa sadrži znak $ ispred slova stupca i ispred broja retka (npr. $A$1). Pri kopiranju formule, takva adresa ostaje nepromjenjena.'},
+
+{type:'abc',topic:'Apsolutne adrese',
+ text:'Kako se zapisuje potpuno apsolutna adresa ćelije B4?',
+ opts:['B4','#B#4','$B$4','@B@4'],
+ ans:2,exp:'Apsolutna adresa se zapisuje s $ ispred slova stupca I ispred broja retka: $B$4. Time se zaključavaju i stupac i redak.'},
+
+{type:'abc',topic:'Apsolutne adrese',
+ text:'Formula =$B$1*A2 kopira se iz C2 u C4. Što postaje formula u C4?',
+ excel:{hdrs:['','A','B','C'],rows:[['1','','10',''],['2','5','','=$B$1*A2'],['3','7','',''],['4','9','','?']],absCell:[0,2]},
+ opts:['=$B$1*A2','=$B$3*A4','=$B$1*A4','=$B$4*A4'],
+ ans:2,exp:'$B$1 je apsolutna adresa – ostaje $B$1. A2 je relativna – pomiče se za 2 retka dolje → A4. Nova formula: =$B$1*A4.'},
+
+{type:'fill',topic:'Apsolutne adrese',
+ text:'Napiši potpuno apsolutnu adresu ćelije C5 (zaključaj i stupac i redak):',
+ excel:{hdrs:['','A','B','C','D'],
+  rows:[['1','','','',''],['2','','','',''],['3','','','',''],['4','','','',''],['5','','','★','']],
+  hiCell:[4,3]},
+ correct:['$C$5','$c$5'],show:'$C$5',
+ exp:'Apsolutna adresa: $C$5. Znak $ ispred C zaključava stupac, $ ispred 5 zaključava redak. Pri kopiranju, adresa ostaje $C$5.'},
+
+{type:'abc',topic:'Apsolutne adrese',
+ text:'Formula =$A$1+B2 je u ćeliji C2. Kopiramo je u C5. Što postaje formula u C5?',
+ excel:{hdrs:['','A','B','C'],
+  rows:[['1','10','',''],['2','','5','=$A$1+B2'],['3','','8',''],['4','','3',''],['5','','6','?']],
+  fxBar:'=$A$1+B2',absCell:[0,1],resCell:[4,3]},
+ opts:['=$A$1+B2','=$A$4+B5','=$A$1+B5','=$A$4+B5'],
+ ans:2,exp:'$A$1 je apsolutna – zaključana, ostaje $A$1. B2 je relativna – pomiče se za 3 retka dolje (2→5) → B5. Nova formula u C5: =$A$1+B5.'},
+
+// ── SPAJANJE ──
+{type:'match',topic:'Funkcije',
+ text:'Poveži svaku Excel funkciju s njezinim opisom:',
+ pairs:[{L:'=SUM(A1:A5)',R:'Zbroj vrijednosti u rasponu'},{L:'=AVERAGE(A1:A5)',R:'Prosječna vrijednost u rasponu'},{L:'=MAX(A1:A5)',R:'Najveća vrijednost u rasponu'},{L:'=MIN(A1:A5)',R:'Najmanja vrijednost u rasponu'}],
+ exp:'SUM=zbroj, AVERAGE=prosjek, MAX=najveća vrijednost, MIN=najmanja vrijednost.'},
+
+];
+
+// ═══ STATE ═══
+let questions=[], cq=0, score=0, answered=[], matchLeftSel=-1, matchDone=0, isAns=false;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function startQuiz(){
+  // Keep topic order but shuffle within each topic
+  const topicOrder=['Osnove Excela','Osnove programa','Adrese ćelija','Formule','Funkcije','Relativne adrese','Apsolutne adrese'];
+  const byTopic={};
+  ALL_Q.forEach(q=>{if(!byTopic[q.topic])byTopic[q.topic]=[];byTopic[q.topic].push(q);});
+  questions=[];
+  topicOrder.forEach(t=>{if(byTopic[t])questions.push(...shuffle(byTopic[t]));});
+  // append any topics not in topicOrder
+  Object.keys(byTopic).forEach(t=>{if(!topicOrder.includes(t))questions.push(...shuffle(byTopic[t]));});
+  cq=0;score=0;answered=questions.map(()=>null);
+  document.getElementById('startWrap').classList.remove('on');
+  document.getElementById('quizWrap').classList.add('on');
+  buildNav();renderQ();
+}
+
+function restartQuiz(){
+  document.getElementById('resultsWrap').classList.remove('on');
+  startQuiz();
+}
+
+// NAV
+function buildNav(){
+  const topicOrder=['Osnove Excela','Osnove programa','Adrese ćelija','Formule','Funkcije','Relativne adrese','Apsolutne adrese'];
+  const allTopics=[...new Set(questions.map(q=>q.topic))];
+  const topics=[...topicOrder.filter(t=>allTopics.includes(t)),...allTopics.filter(t=>!topicOrder.includes(t))];
+  const byT={};
+  questions.forEach((q,i)=>{if(!byT[q.topic])byT[q.topic]=[];byT[q.topic].push(i);});
+  let h='';
+  topics.forEach(t=>{
+    h+=`<div class="tp-lbl">${t}</div>`;
+    byT[t].forEach(i=>{
+      const s=questions[i].text.length>30?questions[i].text.slice(0,30)+'…':questions[i].text;
+      h+=`<button class="qnb" id="nav${i}" onclick="jumpTo(${i})"><div class="qnum">${i+1}</div><span class="qtxt">${s}</span></button>`;
+    });
+  });
+  document.getElementById('navList').innerHTML=h;
+}
+
+function updateNav(){
+  questions.forEach((_,i)=>{
+    const el=document.getElementById(`nav${i}`);
+    if(!el)return;
+    el.className='qnb';
+    if(i===cq)el.classList.add('active');
+    else if(answered[i]==='correct')el.classList.add('dc');
+    else if(answered[i]==='wrong')el.classList.add('dw');
+    else if(answered[i]==='skip')el.classList.add('sk');
+  });
+  const cur=document.getElementById(`nav${cq}`);
+  if(cur)cur.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function updateStats(){
+  const co=answered.filter(a=>a==='correct').length;
+  const wr=answered.filter(a=>a==='wrong').length;
+  const to=answered.filter(a=>a!==null).length;
+  document.getElementById('sTotal').textContent=to;
+  document.getElementById('sCorr').textContent=co;
+  document.getElementById('sWrong').textContent=wr;
+  document.getElementById('scDisp').textContent=score;
+  const pct=Math.round((to/questions.length)*100);
+  document.getElementById('pfill').style.width=(pct||3)+'%';
+  document.getElementById('ppct').textContent=pct+'%';
+  document.getElementById('plbl').textContent=`Pitanje ${cq+1} od ${questions.length}`;
+}
+
+function jumpTo(i){cq=i;renderQ();}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('collapsed');}
+
+// RENDER
+function renderQ(){
+  isAns=answered[cq]!==null;
+  matchLeftSel=-1;matchDone=0;
+  const q=questions[cq];
+  document.getElementById('fbBox').className='fb';
+  document.getElementById('btnNext').className='btn-next';
+  document.getElementById('btnSkip').style.display=isAns?'none':'';
+  const allDone=answered.every(a=>a!==null);
+  document.getElementById('btnFin').className=allDone?'btn-fin done':'btn-fin';
+  updateStats();updateNav();
+
+  const tl={abc:'Višestruki izbor',fill:'Popuni prazninu',match:'Spajanje'};
+  const tc={abc:'t-abc',fill:'t-fill',match:'t-match'};
+  let h=`<div class="qmeta"><div class="qbadge">${cq+1}</div><div class="ttag ${tc[q.type]}">${tl[q.type]}</div><div class="tpctag">📂 ${q.topic}</div></div><div class="qtxt2">${q.text}</div>`;
+  if(q.excel)h+=buildEx(q.excel);
+  if(q.type==='abc')h+=buildABC(q);
+  else if(q.type==='fill')h+=buildFill(q);
+  else if(q.type==='match')h+=buildMatch(q);
+  document.getElementById('qCard').innerHTML=h;
+  if(isAns)restoreState(q);
+}
+
+function buildEx(e){
+  let h=`<div class="ewrap">`;
+  if(e.fxBar)h+=`<div class="fxbar"><span class="fx">fx</span>${e.fxBar}</div>`;
+  h+=`<table class="ext"><tr>`;
+  e.hdrs.forEach(d=>h+=`<th>${d}</th>`);
+  h+=`</tr>`;
+  e.rows.forEach((row,ri)=>{
+    h+=`<tr>`;
+    row.forEach((cell,ci)=>{
+      if(ci===0){h+=`<td class="rh">${cell}</td>`;return;}
+      let c='';
+      if(e.hiCell&&e.hiCell[0]===ri&&e.hiCell[1]===ci)c='hi';
+      if(e.resCell&&e.resCell[0]===ri&&e.resCell[1]===ci){c='res';cell='?';}
+      if(e.absCell&&e.absCell[0]===ri&&e.absCell[1]===ci)c='abs';
+      if(e.range){const[r1,c1,r2,c2]=e.range;if(ri>=r1&&ri<=r2&&ci>=c1&&ci<=c2)c='rng';}
+      h+=`<td class="${c}">${cell}</td>`;
+    });
+    h+=`</tr>`;
+  });
+  return h+`</table></div>`;
+}
+
+function buildABC(q){
+  const lt=['A','B','C','D'];
+  return `<div class="opts">${q.opts.map((o,i)=>`<button class="opt" id="opt${i}" onclick="ansABC(${i})"><div class="ltr">${lt[i]}</div><span>${o}</span></button>`).join('')}</div>`;
+}
+function buildFill(q){
+  return `<div class="fill-row"><input class="fin" id="fi" type="text" placeholder="Upiši odgovor..." onkeydown="if(event.key==='Enter')checkFill()"><button class="btn-chk" onclick="checkFill()">Provjeri ✓</button></div>`;
+}
+function buildMatch(q){
+  const left=q.pairs.map((p,i)=>({...p,id:i}));
+  const right=shuffle(q.pairs.map((p,i)=>({R:p.R,id:i})));
+  let h=`<div class="mwrap"><div><div class="mclbl">Funkcija / Pojam</div>`;
+  left.forEach((p,i)=>h+=`<div class="mi L" id="ml${i}" data-id="${i}" onclick="pickMatch('L',${i})">${p.L}</div>`);
+  h+=`</div><div><div class="mclbl">Opis</div>`;
+  right.forEach((p,i)=>h+=`<div class="mi R" id="mr${i}" data-id="${p.id}" onclick="pickMatch('R',${i})">${p.R}</div>`);
+  return h+`</div></div><p class="mhint">Klikni lijevu stavku, zatim odgovarajuću desnu.</p>`;
+}
+
+// ANSWER
+function ansABC(idx){
+  if(isAns)return;isAns=true;
+  const q=questions[cq];const ok=idx===q.ans;
+  document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.ans)b.classList.add('correct');if(i===idx&&!ok)b.classList.add('wrong');});
+  record(ok,ok?5:0,q.exp);
+}
+
+function checkFill(){
+  if(isAns)return;
+  const inp=document.getElementById('fi');
+  if(!inp||!inp.value.trim())return;
+  isAns=true;const q=questions[cq];const val=inp.value.trim();
+  const ok=q.correct.some(c=>c.toLowerCase()===val.toLowerCase());
+  inp.disabled=true;inp.classList.add(ok?'correct':'wrong');
+  if(!ok)inp.value=`${val}  →  Točno: ${q.show}`;
+  record(ok,ok?5:0,q.exp);
+}
+
+function pickMatch(side,idx){
+  if(isAns)return;
+  const q=questions[cq];
+  if(side==='L'){
+    document.querySelectorAll('.mi.L').forEach(e=>e.classList.remove('sel'));
+    const el=document.getElementById(`ml${idx}`);
+    if(el&&!el.classList.contains('ok')){el.classList.add('sel');matchLeftSel=idx;}
+  } else {
+    if(matchLeftSel<0)return;
+    const lEl=document.getElementById(`ml${matchLeftSel}`);
+    const rEl=document.getElementById(`mr${idx}`);
+    if(!lEl||!rEl||lEl.classList.contains('ok')||rEl.classList.contains('ok'))return;
+    const lId=parseInt(lEl.dataset.id);
+    const rId=parseInt(rEl.dataset.id);
+    if(lId===rId){
+      lEl.classList.remove('sel');lEl.classList.add('ok');rEl.classList.add('ok');
+      matchDone++;score+=2;document.getElementById('scDisp').textContent=score;
+      if(matchDone===q.pairs.length){answered[cq]='correct';updateStats();updateNav();showFb(true,q.exp);isAns=true;}
+    } else {
+      rEl.classList.add('err');setTimeout(()=>rEl.classList.remove('err'),400);
+    }
+    matchLeftSel=-1;document.querySelectorAll('.mi.L').forEach(e=>e.classList.remove('sel'));
+  }
+}
+
+function record(ok,pts,exp){
+  answered[cq]=ok?'correct':'wrong';if(ok)score+=pts;
+  updateStats();updateNav();showFb(ok,exp);
+}
+
+function showFb(ok,exp){
+  document.getElementById('fbIco').textContent=ok?'✓':'✗';
+  document.getElementById('fbTxt').innerHTML=`<strong>${ok?'Točno!':'Netočno!'}</strong> ${exp}`;
+  document.getElementById('fbBox').className='fb show '+(ok?'ok':'err');
+  document.getElementById('btnNext').className='btn-next show';
+  document.getElementById('btnSkip').style.display='none';
+  const allDone=answered.every(a=>a!==null);
+  document.getElementById('btnFin').className=allDone?'btn-fin done':'btn-fin';
+}
+
+function restoreState(q){
+  const ok=answered[cq]==='correct';
+  if(q.type==='abc'){
+    document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.ans)b.classList.add('correct');});
+    showFb(ok,q.exp);
+  } else if(q.type==='fill'){
+    const inp=document.getElementById('fi');
+    if(inp){inp.disabled=true;inp.classList.add(ok?'correct':'wrong');inp.value=ok?q.show:'Netočno – Točno: '+q.show;}
+    showFb(ok,q.exp);
+  } else if(q.type==='match'){showFb(ok,q.exp);}
+  document.getElementById('btnSkip').style.display='none';
+}
+
+function finishQuiz(){
+  const unanswered=answered.filter(a=>a===null||a==='skip').length;
+  if(unanswered>0){
+    const msg=`Još ${unanswered} pitanje${unanswered===1?'':unanswered<5?'a':'a'} nije odgovoreno.\nPreskočena i neodgovorena pitanja računaju se kao netočna.\n\nŽeliš li predati kviz?`;
+    if(!confirm(msg))return;
+  }
+  showResults();
+}
+
+function skipQ(){
+  if(isAns)return;
+  answered[cq]='skip';updateStats();updateNav();goNext();
+}
+
+function goNext(){
+  let next=-1;
+  for(let i=cq+1;i<questions.length;i++){if(answered[i]===null||answered[i]==='skip'){next=i;break;}}
+  if(next===-1){for(let i=0;i<cq;i++){if(answered[i]===null||answered[i]==='skip'){next=i;break;}}}
+  if(next===-1){showResults();return;}
+  cq=next;renderQ();
+  document.getElementById('main').scrollTo({top:0,behavior:'smooth'});
+}
+
+function showResults(){
+  document.getElementById('quizWrap').classList.remove('on');
+  document.getElementById('resultsWrap').classList.add('on');
+  const total=questions.length;
+  const co=answered.filter(a=>a==='correct').length;
+  const sk=answered.filter(a=>a==='skip'||a===null).length;
+  const wr=total-co-sk; // answered wrong (not skipped, not correct)
+  const wrTotal=wr+sk;  // wrong + skipped both count as wrong for percentage
+  const pct=Math.round((co/total)*100);
+  document.getElementById('rSc').textContent=score;
+  document.getElementById('rTot').textContent=total;
+  document.getElementById('rCo').textContent=co;
+  document.getElementById('rWr').textContent=wrTotal;
+  document.getElementById('rPc').textContent=pct+'%';
+  let tr,ti,ts,tm;
+  if(pct>=90){tr='🏆';ti='Odlično!';ts='Pravi Excel stručnjak!';tm='Savladao/la si sve – od osnova do apsolutnih i mješovitih adresa. Spreman/a si za napredni Excel!';}
+  else if(pct>=75){tr='🥇';ti='Bravo!';ts='Vrlo dobar rezultat!';tm='Izvrsno! Još malo vježbe s apsolutnim adresama ($) i kombiniranjem funkcija, i bit ćeš savršen/a.';}
+  else if(pct>=55){tr='🥈';ti='Dobro!';ts='Solidan rezultat.';tm='Poznaješ osnove. Ponovi relativne (A1) i apsolutne ($A$1) adrese te pisanje funkcija SUM, AVERAGE, MIN, MAX.';}
+  else{tr='📚';ti='Još malo!';ts='Treba više vježbe.';tm='Ponovi gradivo – posebno razliku između relativnih i apsolutnih adresa, te pisanje formula koje počinju s =. Možeš ti to!';}
+  document.getElementById('rTr').textContent=tr;document.getElementById('rTi').textContent=ti;
+  document.getElementById('rSb').textContent=ts;document.getElementById('rMsg').textContent=tm;
+}
+</script>
+</body>
+</html>
