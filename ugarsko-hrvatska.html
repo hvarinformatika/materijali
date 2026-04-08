@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arpadovići – Hrvatski kraljevi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9952a;
+    --gold-light: #e8b84b;
+    --gold-pale: #f5e8c7;
+    --dark: #1a1008;
+    --dark2: #2d1e0a;
+    --parchment: #f7f0df;
+    --parchment2: #ede3c8;
+    --ink: #2c1e0f;
+    --red: #8b1a1a;
+    --red-light: #c0392b;
+    --blue-medieval: #1a3a5c;
+    --border: #b8860b;
+    --shadow: rgba(26,16,8,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--dark);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Decorative background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(201,149,42,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,26,26,0.08) 0%, transparent 50%),
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(201,149,42,0.03) 40px,
+        rgba(201,149,42,0.03) 41px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 15px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .main-header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    margin-bottom: 30px;
+    position: relative;
+  }
+
+  .crown-icon {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 12px rgba(201,149,42,0.6));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .main-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    color: var(--gold-light);
+    text-shadow: 0 2px 8px rgba(201,149,42,0.4), 0 0 40px rgba(201,149,42,0.2);
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+
+  .main-subtitle {
+    font-size: 1.1rem;
+    color: var(--parchment2);
+    margin-top: 8px;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  .header-line {
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 15px auto;
+  }
+
+  .meta-info {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .meta-badge {
+    background: rgba(201,149,42,0.15);
+    border: 1px solid rgba(201,149,42,0.35);
+    color: var(--gold-pale);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* PROGRESS BAR */
+  .progress-container {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,149,42,0.2);
+    border-radius: 30px;
+    padding: 12px 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .progress-label {
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  .progress-bar-outer {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
+  .progress-score {
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* SECTION CARD */
+  .section-card {
+    background: var(--parchment);
+    border-radius: 4px;
+    margin-bottom: 30px;
+    box-shadow:
+      0 4px 20px var(--shadow),
+      inset 0 0 0 1px rgba(184,134,11,0.3);
+    overflow: hidden;
+    position: relative;
+    animation: slideUp 0.5s ease both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-card:nth-child(1) { animation-delay: 0.1s; }
+  .section-card:nth-child(2) { animation-delay: 0.2s; }
+  .section-card:nth-child(3) { animation-delay: 0.3s; }
+  .section-card:nth-child(4) { animation-delay: 0.4s; }
+
+  /* Decorative corner */
+  .section-card::before {
+    content: '✦';
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    color: var(--gold);
+    font-size: 1rem;
+    opacity: 0.4;
+  }
+
+  .section-header {
+    padding: 18px 24px 16px;
+    background: linear-gradient(135deg, var(--dark2) 0%, #3d2a10 100%);
+    border-bottom: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .section-num {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  .section-title-group h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+
+  .section-title-group .reign {
+    font-size: 0.88rem;
+    color: var(--parchment2);
+    margin-top: 2px;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  .section-body {
+    padding: 22px 24px;
+  }
+
+  /* RULER INFO GRID */
+  .ruler-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: start;
+  }
+
+  .ruler-portrait {
+    width: 90px;
+    height: 110px;
+    background: linear-gradient(160deg, var(--dark2), #4a2f10);
+    border: 2px solid var(--gold);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 3px 3px 12px var(--shadow);
+    flex-shrink: 0;
+  }
+
+  .ruler-portrait .portrait-emoji {
+    font-size: 2.8rem;
+    line-height: 1;
+  }
+
+  .ruler-portrait .portrait-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  .ruler-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .fact-item {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .fact-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  .fact-value {
+    color: var(--ink);
+    font-size: 0.93rem;
+  }
+
+  /* CONTENT PARAGRAPHS */
+  .content-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+
+  .content-text strong {
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(139,26,26,0.08), rgba(201,149,42,0.08));
+    border-left: 4px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+  }
+
+  .highlight-box.blue {
+    background: linear-gradient(135deg, rgba(26,58,92,0.08), rgba(26,58,92,0.04));
+    border-color: var(--blue-medieval);
+  }
+
+  .highlight-box .hb-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .highlight-box.blue .hb-title {
+    color: var(--blue-medieval);
+  }
+
+  .highlight-box p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  /* ZLATNA BULA special box */
+  .bula-box {
+    background: linear-gradient(135deg, #fff9ee, var(--parchment2));
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin: 18px 0;
+    position: relative;
+    box-shadow: 0 3px 12px rgba(201,149,42,0.15);
+  }
+
+  .bula-box::before {
+    content: '📜';
+    position: absolute;
+    top: -14px;
+    left: 20px;
+    font-size: 1.6rem;
+    background: var(--parchment);
+    padding: 0 6px;
+  }
+
+  .bula-box h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--dark2);
+    margin-bottom: 10px;
+    margin-top: 4px;
+  }
+
+  .bula-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 8px;
+  }
+
+  .bula-list li {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .bula-list li::before {
+    content: '⚜';
+    color: var(--gold);
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+
+  /* DIVIDER */
+  .ornament-divider {
+    text-align: center;
+    color: var(--gold);
+    font-size: 1.1rem;
+    opacity: 0.5;
+    margin: 18px 0;
+    letter-spacing: 0.5em;
+  }
+
+  /* QUIZ SECTION */
+  .quiz-section {
+    background: linear-gradient(135deg, var(--dark2), #2d1a05);
+    border-top: 3px solid var(--gold);
+    padding: 22px 24px;
+    margin-top: 0;
+  }
+
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .quiz-icon {
+    font-size: 1.5rem;
+  }
+
+  .quiz-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.06em;
+  }
+
+  .quiz-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .quiz-q {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,149,42,0.2);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+
+  .quiz-q-text {
+    color: var(--parchment);
+    font-size: 0.97rem;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .quiz-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 7px 10px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    color: var(--parchment2);
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  .quiz-option:hover {
+    background: rgba(201,149,42,0.1);
+    border-color: rgba(201,149,42,0.3);
+  }
+
+  .quiz-option.correct {
+    background: rgba(34,120,54,0.2);
+    border-color: #2a7a3a;
+    color: #7fd49a;
+  }
+
+  .quiz-option.wrong {
+    background: rgba(139,26,26,0.2);
+    border-color: var(--red);
+    color: #e88;
+  }
+
+  .quiz-option input[type="radio"] {
+    accent-color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .quiz-feedback {
+    margin-top: 8px;
+    font-size: 0.88rem;
+    font-style: italic;
+    padding: 6px 10px;
+    border-radius: 3px;
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(34,120,54,0.15); color: #7fd49a; }
+  .quiz-feedback.wrong { background: rgba(139,26,26,0.15); color: #e99; }
+
+  .quiz-check-btn {
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--dark);
+    border: none;
+    padding: 10px 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px rgba(201,149,42,0.3);
+  }
+
+  .quiz-check-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(201,149,42,0.4);
+  }
+
+  .quiz-check-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
+  }
+
+  .quiz-result {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: none;
+  }
+
+  .quiz-result.show { display: block; }
+  .quiz-result.perfect { background: rgba(34,120,54,0.2); color: #7fd49a; border: 1px solid #2a7a3a; }
+  .quiz-result.good { background: rgba(201,149,42,0.15); color: var(--gold-light); border: 1px solid rgba(201,149,42,0.4); }
+  .quiz-result.retry { background: rgba(139,26,26,0.15); color: #e99; border: 1px solid #8b1a1a; }
+
+  /* RESEARCH TASK */
+  .research-section {
+    background: linear-gradient(135deg, #f0e8d5, var(--parchment2));
+    border-top: 2px dashed var(--gold);
+    padding: 20px 24px;
+  }
+
+  .research-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .research-icon {
+    font-size: 1.4rem;
+  }
+
+  .research-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--blue-medieval);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .research-task {
+    background: white;
+    border: 1px solid rgba(26,58,92,0.2);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+
+  .research-task p {
+    font-size: 0.97rem;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .research-task p strong {
+    color: var(--blue-medieval);
+  }
+
+  .research-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 1px solid rgba(26,58,92,0.3);
+    border-radius: 3px;
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: #fafafa;
+    resize: vertical;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+
+  .research-textarea:focus {
+    outline: none;
+    border-color: var(--blue-medieval);
+    background: white;
+  }
+
+  .research-textarea::placeholder {
+    color: #aaa;
+    font-style: italic;
+  }
+
+  /* TIMELINE */
+  .mini-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 14px 0;
+    position: relative;
+    padding-left: 24px;
+  }
+
+  .mini-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold), var(--red));
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 6px 0 6px 16px;
+    font-size: 0.93rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -17px;
+    top: 11px;
+    width: 10px;
+    height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    border: 2px solid var(--parchment);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+
+  .timeline-year {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--red);
+    margin-right: 6px;
+  }
+
+  /* SUMMARY TABLE */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 12px 0;
+  }
+
+  .summary-table th {
+    background: linear-gradient(135deg, var(--dark2), #3d2a10);
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    padding: 9px 12px;
+    text-align: left;
+  }
+
+  .summary-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(184,134,11,0.15);
+    color: var(--ink);
+    line-height: 1.45;
+  }
+
+  .summary-table tr:nth-child(even) td {
+    background: rgba(184,134,11,0.06);
+  }
+
+  /* FINAL SCORE */
+  .final-card {
+    background: linear-gradient(135deg, var(--dark2), #1a0a00);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    padding: 30px 24px;
+    text-align: center;
+    margin-top: 30px;
+    box-shadow: 0 6px 30px rgba(201,149,42,0.2);
+  }
+
+  .final-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    letter-spacing: 0.06em;
+  }
+
+  .final-score-display {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(201,149,42,0.5);
+    margin: 10px 0;
+  }
+
+  .final-msg {
+    color: var(--parchment2);
+    font-size: 1rem;
+    font-style: italic;
+    margin-top: 8px;
+  }
+
+  .print-btn {
+    margin-top: 20px;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 10px 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .print-btn:hover {
+    background: var(--gold);
+    color: var(--dark);
+  }
+
+  /* COMPARISON TABLE section */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 14px 0;
+  }
+
+  .compare-col {
+    background: var(--parchment2);
+    border: 1px solid rgba(184,134,11,0.3);
+    border-radius: 4px;
+    padding: 14px;
+  }
+
+  .compare-col h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--red);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(184,134,11,0.3);
+    padding-bottom: 6px;
+  }
+
+  .compare-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .compare-col ul li {
+    font-size: 0.9rem;
+    line-height: 1.45;
+    padding-left: 14px;
+    position: relative;
+    color: var(--ink);
+  }
+
+  .compare-col ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+  }
+
+  @media (max-width: 600px) {
+    .ruler-grid { grid-template-columns: 1fr; }
+    .ruler-portrait { width: 100%; height: 80px; flex-direction: row; gap: 10px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .section-body, .quiz-section, .research-section { padding: 16px; }
+    .main-title { font-size: 1.6rem; }
+  }
+
+  @media print {
+    body { background: white; }
+    body::before { display: none; }
+    .quiz-option, .quiz-check-btn, .research-textarea, .print-btn { 
+      border: 1px solid #ccc !important; 
+    }
+    .quiz-section { background: #f5f5f5 !important; }
+    .section-card { box-shadow: 0 0 0 1px #ccc; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <header class="main-header">
+    <span class="crown-icon">👑</span>
+    <h1 class="main-title">Arpadovići – Vladari Hrvatske i Ugarske</h1>
+    <div class="header-line"></div>
+    <p class="main-subtitle">Interaktivni radni listić • Povijest 6. razred</p>
+    <div class="meta-info">
+      <span class="meta-badge">🏰 Srednji vijek</span>
+      <span class="meta-badge">📅 12. – 13. st.</span>
+      <span class="meta-badge">📜 4 poglavlja + kvizovi</span>
+    </div>
+  </header>
+
+  <!-- PROGRESS -->
+  <div class="progress-container">
+    <span class="progress-label">⚔ Napredak</span>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar"></div>
+    </div>
+    <span class="progress-score" id="progressScore">0 / 12 bodova</span>
+  </div>
+
+  <!-- ============ SEKCIJA 1: ARPADOVIĆI UVOD ============ -->
+  <div class="section-card" id="sec1">
+    <div class="section-header">
+      <span class="section-num">I</span>
+      <div class="section-title-group">
+        <h2>Arpadovići i personalna unija</h2>
+        <div class="reign">Hrvatska ulazi u uniju s Ugarskom</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="ruler-grid">
+        <div class="ruler-portrait">
+          <span class="portrait-emoji">🗺️</span>
+          <span class="portrait-label">Hrvatska & Ugarska</span>
+        </div>
+        <div class="ruler-facts">
+          <div class="fact-item">
+            <span class="fact-label">Dinastija</span>
+            <span class="fact-value">Arpadovići (Árpádháza)</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Početak</span>
+            <span class="fact-value">1102. godina – Koloman postaje kraljem Hrvatske</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Kraj</span>
+            <span class="fact-value">1301. – izumiranje muške loze Arpadovića</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Tip veze</span>
+            <span class="fact-value">Personalna unija – isti vladar, zasebne države</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="content-text">
+        Nakon što je hrvatska vlastela ostala bez kralja (smrt Stjepana II. 1091.), Hrvatska je ušla u <strong>personalnu uniju s Ugarskom</strong> 1102. godine. To znači da je isti vladar vladao objema državama, ali su Hrvatska i Ugarska ostale <strong>odvojene, zasebne države</strong> sa svojim zakonima, vlastelom i institucijama.
+      </p>
+
+      <div class="highlight-box">
+        <div class="hb-title">🔑 Ključni pojam – Personalna unija</div>
+        <p>Personalna unija je savez dviju ili više zasebnih država koje dijele <strong>istog vladara</strong>. Svaka država zadržava vlastitu upravu, zakone i institucije. Hrvatska nije bila pripojena Ugarskoj – ostala je <em>regnum</em> (kraljevstvo) sa svim svojim pravima.</p>
+      </div>
+
+      <p class="content-text">
+        Veza između Hrvatske i Ugarske temelji se na tzv. <strong>Pacti conventi</strong> (Ugovori s 12 hrvatskih rodova, 1102.). Prema tom dokumentu, Koloman je potvrdio stara hrvatska prava i slobode vlastele u zamjenu za priznavanjem njega kao kralja. Arpadovići su vladali Hrvatskom sve do izumiranja muške loze 1301. godine.
+      </p>
+
+      <div class="mini-timeline">
+        <div class="timeline-item"><span class="timeline-year">1091.</span>Ugarski kralj Ladislav I. ulazi u Hrvatsku, osvaja Slavoniju</div>
+        <div class="timeline-item"><span class="timeline-year">1097.</span>Bitka na Gvozdu – pogibija posljednjeg hrvatskog kralja Petra Svačića</div>
+        <div class="timeline-item"><span class="timeline-year">1102.</span>Koloman okrunjen kao kralj Dalmacije i Hrvatske u Biogradu na moru</div>
+        <div class="timeline-item"><span class="timeline-year">1301.</span>Izumiranje muške loze Arpadovića – kraj dinastije</div>
+      </div>
+    </div>
+
+    <!-- KVIZ 1 -->
+    <div class="quiz-section">
+      <div class="quiz-header">
+        <span class="quiz-icon">⚔️</span>
+        <span class="quiz-title">Provjera znanja – Uvod i personalna unija</span>
+      </div>
+      <div class="quiz-questions" id="quiz1">
+        <div class="quiz-q" data-correct="b">
+          <div class="quiz-q-text">1. Što je personalna unija?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q1_1" value="a"> Potpuno spajanje dvije države u jednu</label>
+            <label class="quiz-option"><input type="radio" name="q1_1" value="b"> Savez dvije države s istim vladarom, ali odvojenom upravom</label>
+            <label class="quiz-option"><input type="radio" name="q1_1" value="c"> Vojni savez bez zajedničkog vladara</label>
+          </div>
+          <div class="quiz-feedback" id="fb1_1"></div>
+        </div>
+        <div class="quiz-q" data-correct="c">
+          <div class="quiz-q-text">2. Koja je bitka označila kraj posljednjeg hrvatskog narodnog kralja?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q1_2" value="a"> Bitka kod Bele Stijene</label>
+            <label class="quiz-option"><input type="radio" name="q1_2" value="b"> Bitka na Neretvi</label>
+            <label class="quiz-option"><input type="radio" name="q1_2" value="c"> Bitka na Gvozdu (1097.)</label>
+          </div>
+          <div class="quiz-feedback" id="fb1_2"></div>
+        </div>
+        <div class="quiz-q" data-correct="a">
+          <div class="quiz-q-text">3. Kada je Koloman okrunjen za kralja Hrvatske?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q1_3" value="a"> 1102. godine</label>
+            <label class="quiz-option"><input type="radio" name="q1_3" value="b"> 1091. godine</label>
+            <label class="quiz-option"><input type="radio" name="q1_3" value="c"> 1301. godine</label>
+          </div>
+          <div class="quiz-feedback" id="fb1_3"></div>
+        </div>
+      </div>
+      <button class="quiz-check-btn" onclick="checkQuiz('quiz1', 'result1', 'q1')">Provjeri odgovore ⚜</button>
+      <div class="quiz-result" id="result1"></div>
+    </div>
+
+    <!-- ISTRAŽIVANJE 1 -->
+    <div class="research-section">
+      <div class="research-header">
+        <span class="research-icon">🔍</span>
+        <span class="research-title">Zadatak za istraživanje</span>
+      </div>
+      <div class="research-task">
+        <p><strong>Istraži i odgovori:</strong> Danas postoji kameni natpis s imenom kralja Kolomana koji se čuva u jednom hrvatskom gradu. U <em>kojemu gradu</em> se taj natpis nalazi i što misliš <em>zašto je tamo postavljen</em>? Što je taj grad značio u Kolomanovom vremenu?</p>
+        <textarea class="research-textarea" placeholder="Ovdje napiši svoje istraživanje... (gdje je natpis, što misliš zašto je tamo)"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SEKCIJA 2: KOLOMAN ============ -->
+  <div class="section-card" id="sec2">
+    <div class="section-header">
+      <span class="section-num">II</span>
+      <div class="section-title-group">
+        <h2>Kralj Koloman</h2>
+        <div class="reign">Vladao Hrvatskom: 1102. – 1116.</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="ruler-grid">
+        <div class="ruler-portrait">
+          <span class="portrait-emoji">👑</span>
+          <span class="portrait-label">Koloman I.</span>
+        </div>
+        <div class="ruler-facts">
+          <div class="fact-item">
+            <span class="fact-label">Puno ime</span>
+            <span class="fact-value">Koloman I. Ugarski (Kálmán)</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Vladanje</span>
+            <span class="fact-value">Ugarska: 1095.–1116. | Hrvatska: 1102.–1116.</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Odnos s Hr.</span>
+            <span class="fact-value">Okrunjen u Biogradu, sklopio Pacta Conventa</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Dalmacija</span>
+            <span class="fact-value">Zadar, Split, Trogir – osvajanje do 1105.</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="content-text">
+        Koloman je bio mudar i obrazovan vladar. U Hrvatsku nije ušao kao osvajač, nego kao vladar koji je priznavao prava i slobode domaće vlastele. Sklopio je sporazum poznat kao <strong>Pacta Conventa</strong> s dvanaest hrvatskih plemićkih rodova i dao im jamstvo da će poštovati njihove stare slobode i povlastice.
+      </p>
+
+      <div class="highlight-box">
+        <div class="hb-title">📜 Pacta Conventa (1102.)</div>
+        <p>Koloman je sklopio sporazum s <strong>12 hrvatskih plemićkih rodova</strong>. Prema tom dogovoru, Hrvatska je priznavala Kolomana kao kralja, a Koloman je zauzvrat jamčio:
+        poštivanje starih prava hrvatske vlastele, izuzeće od plaćanja poreza, pravo na vlastito sudstvo i vojni doprinos samo za obranu.</p>
+      </div>
+
+      <p class="content-text">
+        Nakon ujedinjenja, Koloman je nastavio osvajanja na jadranskoj obali. Do 1105. godine osvojio je <strong>Zadar, Split i Trogir</strong>, a zatim i Biograd na moru. Gradovima je davao povlastice i potvrđivao njihova stara prava, čime je osiguravao lojalnost dalmatinskih komuna. Za razliku od Bizanta i Venecije koji su se natjecali za prevlast nad Dalmacijom, Koloman je uspio privući gradove na svoju stranu obećanjima samouprave.
+      </p>
+
+      <div class="highlight-box blue">
+        <div class="hb-title">🌊 Dalmacija pod Kolomanom</div>
+        <p>Kolomanovim osvajanjem Dalmacije, Hrvatska je po prvi put od 9. stoljeća ujedinila <strong>unutrašnju Hrvatsku s primorjem</strong>. Dalmatinski gradovi zadržali su svoju samoupravu (komune) i latinsku kulturu, ali su priznavali Kolomana kao vrhovnog vladara.</p>
+      </div>
+
+
+    </div>
+
+    <!-- KVIZ 2 -->
+    <div class="quiz-section">
+      <div class="quiz-header">
+        <span class="quiz-icon">⚔️</span>
+        <span class="quiz-title">Provjera znanja – Koloman</span>
+      </div>
+      <div class="quiz-questions" id="quiz2">
+        <div class="quiz-q" data-correct="b">
+          <div class="quiz-q-text">1. Na koji način je Koloman stupio na vlast u Hrvatskoj?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q2_1" value="a"> Pobijedio je hrvatsku vojsku i nametnuo svoju vlast silom</label>
+            <label class="quiz-option"><input type="radio" name="q2_1" value="b"> Sklopio je sporazum s hrvatskim plemićkim rodovima i potvrdio njihova prava</label>
+            <label class="quiz-option"><input type="radio" name="q2_1" value="c"> Oženio se hrvatskom princezom i naslijedio prijestolje</label>
+          </div>
+          <div class="quiz-feedback" id="fb2_1"></div>
+        </div>
+        <div class="quiz-q" data-correct="a">
+          <div class="quiz-q-text">2. Što je Koloman obećao Pacta Conventom?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q2_2" value="a"> Poštivanje starih prava i sloboda hrvatske vlastele</label>
+            <label class="quiz-option"><input type="radio" name="q2_2" value="b"> Plaćanje poreza svim hrvatskim gradovima</label>
+            <label class="quiz-option"><input type="radio" name="q2_2" value="c"> Predaju Dalmacije Veneciji</label>
+          </div>
+          <div class="quiz-feedback" id="fb2_2"></div>
+        </div>
+        <div class="quiz-q" data-correct="c">
+          <div class="quiz-q-text">3. Koji dalmatinski gradovi su potpali pod Kolomana do 1105.?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q2_3" value="a"> Dubrovnik, Kotor, Bar</label>
+            <label class="quiz-option"><input type="radio" name="q2_3" value="b"> Pula, Rijeka, Senj</label>
+            <label class="quiz-option"><input type="radio" name="q2_3" value="c"> Zadar, Split, Trogir</label>
+          </div>
+          <div class="quiz-feedback" id="fb2_3"></div>
+        </div>
+      </div>
+      <button class="quiz-check-btn" onclick="checkQuiz('quiz2', 'result2', 'q2')">Provjeri odgovore ⚜</button>
+      <div class="quiz-result" id="result2"></div>
+    </div>
+
+    <!-- ISTRAŽIVANJE 2 - uklonjeno po uputama -->
+  </div>
+
+  <!-- ============ SEKCIJA 3: ANDRIJA II. ============ -->
+  <div class="section-card" id="sec3">
+    <div class="section-header">
+      <span class="section-num">III</span>
+      <div class="section-title-group">
+        <h2>Kralj Andrija II. i Zlatna bula (1222.)</h2>
+        <div class="reign">Vladao: 1205. – 1235.</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="ruler-grid">
+        <div class="ruler-portrait">
+          <span class="portrait-emoji">⚖️</span>
+          <span class="portrait-label">Andrija II.</span>
+        </div>
+        <div class="ruler-facts">
+          <div class="fact-item">
+            <span class="fact-label">Puno ime</span>
+            <span class="fact-value">Andrija II. (II. András)</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Vladanje</span>
+            <span class="fact-value">1205. – 1235. (Ugarska i Hrvatska)</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Ključni čin</span>
+            <span class="fact-value">Zlatna bula 1222. – „Magna Carta" ugarska</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Križ. pohod</span>
+            <span class="fact-value">Predvodio 5. križarski pohod (1217.)</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="content-text">
+        Andrija II. vladao je u vrijeme velikih napetosti između kralja i plemstva. Darovao je ogromna imanja velikanima što je osiromašilo kraljevsku blagajnu i izazvalo nezadovoljstvo sitnog i srednjeg plemstva. Kako bi smirio pobunjeno plemstvo, <strong>1222. godine izdao je Zlatnu bulu</strong> – jedan od najvažnijih pravnih dokumenata u europskoj povijesti.
+      </p>
+
+      <div class="bula-box">
+        <h3>Zlatna bula Andrije II. (1222.)</h3>
+        <p style="font-size:0.93rem;color:var(--ink);margin-bottom:10px;">Zlatna bula bila je kraljevska povelja koja je <strong>ograničavala vlast kralja</strong> i jamčila prava plemstva. Uspoređuje se s engleskom Magna Cartom iz 1215. godine.</p>
+        <p style="font-size:0.88rem;font-family:'Cinzel',serif;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Glavne odredbe:</p>
+        <ul class="bula-list">
+          <li>Plemstvo <strong>ne plaća porez</strong> bez vlastite suglasnosti</li>
+          <li>Nitko od plemića ne može biti uhićen bez <strong>sudskog postupka</strong></li>
+          <li>Kralj ne smije bez razloga <strong>oduzeti imanja</strong> plemićima</li>
+          <li>Vojska je obvezna braniti domovinu, ali <strong>nije obvezna ići u strane ratove</strong> o svom trošku</li>
+          <li>Crkveni dostojanstvenici i plemići <strong>ne podliježu stranim sucima</strong></li>
+          <li><strong>Pravo otpora</strong> (ius resistendi) – ako kralj prekrši bulu, plemstvo se smije pobuniti bez kazne</li>
+        </ul>
+      </div>
+
+      <p class="content-text">
+        <strong>Pravo otpora (ius resistendi)</strong> bila je posebno revolucionarna odredba – po prvi put u europskoj povijesti zakon je dao podanicima pravo da se pobune protiv vladara koji ne poštuje zakon, i to bez da budu kažnjeni za veleizdaju.
+      </p>
+
+      <div class="highlight-box">
+        <div class="hb-title">🌍 Andrija II. i politika prema vani</div>
+        <p>Andrija je 1217. predvodio <strong>5. križarski pohod</strong> u Svetu Zemlju, ali bez većeg vojnog uspjeha. Poznat je i po politici <strong>„novih donacija"</strong> (nova donacija) kojom je dijelio kraljevska dobra velmoža i time oslabio kraljevsku vlast, ali i razljutio sitno plemstvo.</p>
+      </div>
+
+      <p class="content-text">
+        Andrija II. imao je i važne <strong>obiteljske veze</strong> koje su utjecale na europsku politiku. Njegova kći <strong>Elizabeta Ugarska</strong> postala je sveticom Katoličke crkve (Sveta Elizabeta od Turingije). Njegov sin Bela naslijedio ga je kao Bela IV.
+      </p>
+    </div>
+
+    <!-- KVIZ 3 -->
+    <div class="quiz-section">
+      <div class="quiz-header">
+        <span class="quiz-icon">⚔️</span>
+        <span class="quiz-title">Provjera znanja – Andrija II. i Zlatna bula 1222.</span>
+      </div>
+      <div class="quiz-questions" id="quiz3">
+        <div class="quiz-q" data-correct="b">
+          <div class="quiz-q-text">1. Što je Zlatna bula iz 1222.?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q3_1" value="a"> Ukaz o osnivanju Ugarskog parlamenta</label>
+            <label class="quiz-option"><input type="radio" name="q3_1" value="b"> Kraljevska povelja koja je ograničavala vlast kralja i jamčila prava plemstva</label>
+            <label class="quiz-option"><input type="radio" name="q3_1" value="c"> Sporazum između Ugarske i Venecije o Dalmaciji</label>
+          </div>
+          <div class="quiz-feedback" id="fb3_1"></div>
+        </div>
+        <div class="quiz-q" data-correct="c">
+          <div class="quiz-q-text">2. Što je „pravo otpora" (ius resistendi)?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q3_2" value="a"> Pravo plemića da odbiju plaćati vojsku</label>
+            <label class="quiz-option"><input type="radio" name="q3_2" value="b"> Pravo seljaka da napuste imanje svog gospodara</label>
+            <label class="quiz-option"><input type="radio" name="q3_2" value="c"> Pravo da se pobune protiv vladara koji ne poštuje zakon, bez kazne</label>
+          </div>
+          <div class="quiz-feedback" id="fb3_2"></div>
+        </div>
+        <div class="quiz-q" data-correct="a">
+          <div class="quiz-q-text">3. S kojim europskim dokumentom se uspoređuje Zlatna bula 1222.?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q3_3" value="a"> Engleska Magna Carta (1215.)</label>
+            <label class="quiz-option"><input type="radio" name="q3_3" value="b"> Francuska deklaracija o pravima čovjeka (1789.)</label>
+            <label class="quiz-option"><input type="radio" name="q3_3" value="c"> Bečki kongres (1815.)</label>
+          </div>
+          <div class="quiz-feedback" id="fb3_3"></div>
+        </div>
+      </div>
+      <button class="quiz-check-btn" onclick="checkQuiz('quiz3', 'result3', 'q3')">Provjeri odgovore ⚜</button>
+      <div class="quiz-result" id="result3"></div>
+    </div>
+
+    <!-- ISTRAŽIVANJE 3 -->
+    <div class="research-section">
+      <div class="research-header">
+        <span class="research-icon">🔍</span>
+        <span class="research-title">Zadatak za istraživanje</span>
+      </div>
+      <div class="research-task">
+        <p><strong>Istraži obiteljske veze Andrije II.:</strong></p>
+        <p>Kakav je odnos imao Andrija II. sa svojim <strong>ocem</strong> i <strong>bratom</strong>? Je li se slagao s njima ili je bilo sukoba? Tko mu je bio sin i što je taj sin napravio kao vladar?</p>
+        <textarea class="research-textarea" placeholder="Ovdje napiši što si saznao/la o odnosima Andrije II. s ocem, bratom i sinom..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SEKCIJA 4: BELA IV. ============ -->
+  <div class="section-card" id="sec4">
+    <div class="section-header">
+      <span class="section-num">IV</span>
+      <div class="section-title-group">
+        <h2>Bela IV. – „Drugi utemeljitelj" i slobodni kraljevski gradovi</h2>
+        <div class="reign">Vladao: 1235. – 1270.</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="ruler-grid">
+        <div class="ruler-portrait">
+          <span class="portrait-emoji">🏰</span>
+          <span class="portrait-label">Bela IV.</span>
+        </div>
+        <div class="ruler-facts">
+          <div class="fact-item">
+            <span class="fact-label">Puno ime</span>
+            <span class="fact-value">Bela IV. (IV. Béla)</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Vladanje</span>
+            <span class="fact-value">1235. – 1270.</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Ključni događaj</span>
+            <span class="fact-value">Mongolska najezda 1241./1242.</span>
+          </div>
+          <div class="fact-item">
+            <span class="fact-label">Nadimak</span>
+            <span class="fact-value">„Drugi utemeljitelj domovine"</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="content-text">
+        Vladavina Bele IV. obilježena je jednom od najvećih katastrofa u povijesti srednjovjekovne Europe – <strong>mongolskom najezdom 1241./1242. godine</strong>. Mongoli su pod vodstvom Batua i Subotaja porazili ugarsko-hrvatsku vojsku u <strong>Bitci na rijeci Šaju (Mohi)</strong> u travnju 1241. i opustošili cijelu zemlju.
+      </p>
+
+      <div class="highlight-box">
+        <div class="hb-title">🐎 Mongolska najezda (1241.–1242.)</div>
+        <p>Mongolska vojska provalila je u Ugarsku i Hrvatsku 1241. Bela IV. bio prisiljen bježati sve do <strong>Trogira i Splita</strong> na dalmatinskoj obali, gdje se sklonio pod zaštitom gradskih zidina. Mongoli su opustošili unutrašnjost, ali nisu uspjeli zauzeti utvrđene gradove na Jadranu. 1242. Mongoli su se povukli zbog smrti velikog kana Ögedeja.</p>
+      </div>
+
+      <p class="content-text">
+        Nakon odlaska Mongola, Bela IV. suočio se s ogromnim razaranjem. Pristupio je obnovi zemlje pa je dobio nadimak <strong>„Drugi utemeljitelj domovine"</strong>. Jedna od ključnih mjera obnove bila je <strong>gradnja utvrda i zidina</strong> te davanje privilegija slobodnim kraljevskim gradovima.
+      </p>
+
+      <div class="bula-box">
+        <h3>Slobodni kraljevski gradovi – Privilegiji Bele IV.</h3>
+        <p style="font-size:0.93rem;color:var(--ink);margin-bottom:10px;">Da bi potakao oporavak i obranu od novih napada, Bela IV. izdavao je <strong>povlastice gradovima</strong> dajući im status slobodnih kraljevskih gradova (lat. <em>civitas regia libera</em>).</p>
+        <p style="font-size:0.88rem;font-family:'Cinzel',serif;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Što su dobivali slobodni kraljevski gradovi:</p>
+        <ul class="bula-list">
+          <li>Pravo na <strong>vlastitu samoupravu</strong> – biraju svog suca i vijeće</li>
+          <li>Pravo na <strong>vlastite zakone i sudove</strong> – ne podliježu vlasteli</li>
+          <li>Pravo da <strong>slobodno trguju</strong> bez plaćanja carina vlasteli</li>
+          <li>Pravo na <strong>gradnju zidina i utvrda</strong> za obranu</li>
+          <li>Izravna podložnost <strong>samo kralju</strong>, a ne feudalnim gospodarima</li>
+          <li>Pravo na <strong>vlastiti grb i pečat</strong> – simboli autonomije</li>
+        </ul>
+      </div>
+
+      <p class="content-text">
+        U Hrvatskoj su povlastice dobili: <strong>Zagreb (Gradec, 1242.), Varaždin, Križevci, Virovitica</strong> i drugi gradovi. Gradec (danas Gornji grad u Zagrebu) dobio je 1242. privilegij koji ga je uvrstio među slobodne kraljevske gradove – taj datum slavi se kao osnivanje modernog Zagreba.
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-col">
+          <h4>📜 Zlatna bula Andrije II. (1222.)</h4>
+          <ul>
+            <li>Usmjerena na <strong>prava plemstva</strong></li>
+            <li>Ograničava vlast kralja</li>
+            <li>Jamči pravo otpora</li>
+            <li>Povod: nezadovoljstvo sitnoga plemstva</li>
+            <li>Europski uzor: Magna Carta (1215.)</li>
+          </ul>
+        </div>
+        <div class="compare-col">
+          <h4>🏰 Privilegiji Bele IV. (1242.+)</h4>
+          <ul>
+            <li>Usmjereni na <strong>prava građana</strong></li>
+            <li>Jačaju gradove i obranu</li>
+            <li>Jamče samoupravu gradova</li>
+            <li>Povod: obnova nakon mongolske najezde</li>
+            <li>Gradec (Zagreb) 1242. – ključni datum</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ornament-divider">✦ ✦ ✦</div>
+
+      <table class="summary-table">
+        <tr>
+          <th>Vladar</th>
+          <th>Ključni čin</th>
+          <th>Značaj</th>
+        </tr>
+        <tr>
+          <td><strong>Koloman</strong> (1102.–1116.)</td>
+          <td>Pacta Conventa, osvajanje Dalmacije</td>
+          <td>Utemeljio personalnu uniju, sačuvao hrvatska prava</td>
+        </tr>
+        <tr>
+          <td><strong>Andrija II.</strong> (1205.–1235.)</td>
+          <td>Zlatna bula (1222.)</td>
+          <td>Ograničena kraljevska vlast, prava plemstva, pravo otpora</td>
+        </tr>
+        <tr>
+          <td><strong>Bela IV.</strong> (1235.–1270.)</td>
+          <td>Obnova nakon Mongola, privilegiji gradova</td>
+          <td>Slobodni kraljevski gradovi – temelj gradske samouprave</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- KVIZ 4 -->
+    <div class="quiz-section">
+      <div class="quiz-header">
+        <span class="quiz-icon">⚔️</span>
+        <span class="quiz-title">Provjera znanja – Bela IV. i slobodni kraljevski gradovi</span>
+      </div>
+      <div class="quiz-questions" id="quiz4">
+        <div class="quiz-q" data-correct="b">
+          <div class="quiz-q-text">1. Zašto je Bela IV. dobio nadimak „Drugi utemeljitelj domovine"?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q4_1" value="a"> Jer je osvojio Dalmaciju od Venecije</label>
+            <label class="quiz-option"><input type="radio" name="q4_1" value="b"> Jer je obnovio zemlju nakon mongolske najezde i izgradio sustav obrane</label>
+            <label class="quiz-option"><input type="radio" name="q4_1" value="c"> Jer je uveo kršćanstvo u Ugarsku</label>
+          </div>
+          <div class="quiz-feedback" id="fb4_1"></div>
+        </div>
+        <div class="quiz-q" data-correct="a">
+          <div class="quiz-q-text">2. Što su slobodni kraljevski gradovi dobivali povlasticama?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q4_2" value="a"> Samoupravu, vlastite zakone, pravo slobodne trgovine i izravnu podložnost samo kralju</label>
+            <label class="quiz-option"><input type="radio" name="q4_2" value="b"> Pravo na vlastitu vojsku i neovisnost od kralja</label>
+            <label class="quiz-option"><input type="radio" name="q4_2" value="c"> Oslobođenje od svih vojnih obveza</label>
+          </div>
+          <div class="quiz-feedback" id="fb4_2"></div>
+        </div>
+        <div class="quiz-q" data-correct="c">
+          <div class="quiz-q-text">3. Kada je Gradec (Zagreb) dobio privilegij slobodnog kraljevskog grada?</div>
+          <div class="quiz-options">
+            <label class="quiz-option"><input type="radio" name="q4_3" value="a"> 1102. godine</label>
+            <label class="quiz-option"><input type="radio" name="q4_3" value="b"> 1222. godine</label>
+            <label class="quiz-option"><input type="radio" name="q4_3" value="c"> 1242. godine</label>
+          </div>
+          <div class="quiz-feedback" id="fb4_3"></div>
+        </div>
+      </div>
+      <button class="quiz-check-btn" onclick="checkQuiz('quiz4', 'result4', 'q4')">Provjeri odgovore ⚜</button>
+      <div class="quiz-result" id="result4"></div>
+    </div>
+
+    <!-- ISTRAŽIVANJE 4 -->
+    <div class="research-section">
+      <div class="research-header">
+        <span class="research-icon">🔍</span>
+        <span class="research-title">Zadatak za istraživanje</span>
+      </div>
+      <div class="research-task">
+        <p><strong>Razmisli i odgovori:</strong></p>
+        <p>Zamislite da živite u srednjem vijeku. Što bi bilo bolje – živjeti u slobodnom kraljevskom gradu ili na selu kao kmet? Što su građani smjeli raditi, a kmetovi nisu? Možeš li pronaći koji grad u tvojoj blizini je bio slobodan kraljevski grad?</p>
+        <textarea class="research-textarea" placeholder="Ovdje napiši što misliš – u čemu je bila razlika između života u gradu i na selu..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZAVRŠNA KARTICA -->
+  <div class="final-card">
+    <div class="crown-icon" style="font-size:2.5rem;">🏆</div>
+    <div class="final-title">Ukupni rezultat kvizova</div>
+    <div class="final-score-display" id="finalScore">0 / 12</div>
+    <div class="final-msg" id="finalMsg">Odgovori na sve kvizove da vidiš ukupni rezultat!</div>
+    <br>
+    <button class="print-btn" onclick="window.print()">🖨️ Ispiši radni listić</button>
+  </div>
+
+</div>
+
+<script>
+  let totalScore = 0;
+  let maxScore = 12;
+  let quizScores = { q1: 0, q2: 0, q3: 0, q4: 0 };
+  let quizDone = { q1: false, q2: false, q3: false, q4: false };
+
+  const feedbacks = {
+    // Q1
+    fb1_1: { b: '✓ Točno! Personalna unija = isti vladar, ali zasebne države s odvojenom upravom.', wrong: '✗ Nije točno. U personalnoj uniji države ostaju zasebne – nisu spojene.' },
+    fb1_2: { c: '✓ Točno! U Bitci na Gvozdu 1097. poginuo je kralj Petar Svačić, posljednji narodan kralj.', wrong: '✗ Nije točno. Radi se o Bitci na Gvozdu 1097.' },
+    fb1_3: { a: '✓ Točno! Koloman je okrunjen 1102. u Biogradu na moru.', wrong: '✗ Nije točno. Točna godina je 1102.' },
+    // Q2
+    fb2_1: { b: '✓ Točno! Koloman je sklopio Pacta Conventa s 12 hrvatskih rodova i potvrdio njihova prava.', wrong: '✗ Nije točno. Koloman je stupio na vlast sporazumom s hrvatskim plemićkim rodovima, ne silom.' },
+    fb2_2: { a: '✓ Točno! Koloman je Pacta Conventom jamčio prava i slobode hrvatske vlastele.', wrong: '✗ Nije točno. Koloman je jamčio prava vlastele, a ne plaćanje poreza.' },
+    fb2_3: { c: '✓ Točno! Zadar, Split i Trogir – ključni dalmatinski gradovi pod Kolomanom.', wrong: '✗ Nije točno. Kolomanova osvajanja uključivala su Zadar, Split i Trogir.' },
+    // Q3
+    fb3_1: { b: '✓ Točno! Zlatna bula je ograničavala kraljevsku vlast i jamčila prava plemstva.', wrong: '✗ Nije točno. Zlatna bula je ograničavala vlast kralja i štitila plemstvo.' },
+    fb3_2: { c: '✓ Točno! Pravo otpora davalo je pravo pobune bez kazne ako kralj prekrši zakon.', wrong: '✗ Nije točno. Ius resistendi je pravo pobune protiv vladara koji ne poštuje zakon.' },
+    fb3_3: { a: '✓ Točno! Zlatna bula 1222. uspoređuje se s engleskom Magna Cartom iz 1215.', wrong: '✗ Nije točno. Uspoređuje se s engleskom Magna Cartom iz 1215.' },
+    // Q4
+    fb4_1: { b: '✓ Točno! Bela IV. obnovio je zemlju i izgradio obrambeni sustav nakon mongolske pustoši.', wrong: '✗ Nije točno. Nadimak dobio zbog obnove nakon mongolske najezde.' },
+    fb4_2: { a: '✓ Točno! Slobodni gradovi imali su samoupravu, vlastite zakone i slobodnu trgovinu.', wrong: '✗ Nije točno. Gradovi nisu bili neovisni – bili su podložni samo kralju.' },
+    fb4_3: { c: '✓ Točno! Gradec je dobio privilegij 1242. godine od Bele IV.', wrong: '✗ Nije točno. Gradec (Zagreb) dobio je privilegij 1242. od Bele IV.' }
+  };
+
+  function checkQuiz(quizId, resultId, prefix) {
+    const quiz = document.getElementById(quizId);
+    const questions = quiz.querySelectorAll('.quiz-q');
+    let score = 0;
+    let answered = true;
+
+    questions.forEach((q, idx) => {
+      const qNum = idx + 1;
+      const name = prefix + '_' + qNum;
+      const correct = q.dataset.correct;
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      const fbId = 'fb' + prefix.replace('q', '') + '_' + qNum;
+      const fb = document.getElementById(fbId);
+      const options = q.querySelectorAll('.quiz-option');
+
+      if (!selected) { answered = false; return; }
+
+      options.forEach(opt => {
+        opt.classList.remove('correct', 'wrong');
+        const val = opt.querySelector('input').value;
+        if (val === correct) opt.classList.add('correct');
+        else if (val === selected.value && selected.value !== correct) opt.classList.add('wrong');
+        opt.querySelector('input').disabled = true;
+      });
+
+      const fbKey = feedbacks['fb' + prefix.replace('q', '') + '_' + qNum];
+      if (selected.value === correct) {
+        score++;
+        if (fb) { fb.textContent = fbKey[correct]; fb.className = 'quiz-feedback show correct'; }
+      } else {
+        if (fb) { fb.textContent = fbKey.wrong; fb.className = 'quiz-feedback show wrong'; }
+      }
+    });
+
+    if (!answered) {
+      alert('Molim te odgovori na sva pitanja!');
+      return;
+    }
+
+    quizScores[prefix] = score;
+    quizDone[prefix] = true;
+
+    const btn = quiz.nextElementSibling;
+    btn.disabled = true;
+
+    const result = document.getElementById(resultId);
+    result.classList.add('show');
+    if (score === 3) {
+      result.textContent = `⭐⭐⭐ Izvrsno! ${score}/3 – Sve točno! Pravi povjesničar!`;
+      result.className = 'quiz-result show perfect';
+    } else if (score >= 2) {
+      result.textContent = `⭐⭐ Dobro! ${score}/3 – Gotovo sve točno!`;
+      result.className = 'quiz-result show good';
+    } else {
+      result.textContent = `⭐ ${score}/3 – Ponovi gradivo i pokušaj opet!`;
+      result.className = 'quiz-result show retry';
+    }
+
+    updateTotal();
+  }
+
+  function updateTotal() {
+    totalScore = Object.values(quizScores).reduce((a, b) => a + b, 0);
+    const done = Object.values(quizDone).filter(Boolean).length;
+
+    document.getElementById('progressBar').style.width = (totalScore / maxScore * 100) + '%';
+    document.getElementById('progressScore').textContent = totalScore + ' / ' + maxScore + ' bodova';
+    document.getElementById('finalScore').textContent = totalScore + ' / ' + maxScore;
+
+    if (done === 4) {
+      const msg = document.getElementById('finalMsg');
+      if (totalScore === 12) msg.textContent = '🏆 Savršen rezultat! Pravi poznavatelj Arpadovića!';
+      else if (totalScore >= 9) msg.textContent = '⚜ Odličan rezultat! Solidno znanje medievalne povijesti!';
+      else if (totalScore >= 6) msg.textContent = '📜 Dobar rezultat! Ponovi još jednom neke dijelove.';
+      else msg.textContent = '📚 Ponovi gradivo i pokušaj opet – možeš bolje!';
+    }
+  }
+</script>
+
+</body>
+</html>
